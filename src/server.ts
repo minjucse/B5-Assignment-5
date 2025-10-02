@@ -1,56 +1,23 @@
-
-
-import { Server } from "http";
+import {Server} from "http";
+import mongoose from "mongoose";
 import app from "./app";
+import dotenv from "dotenv";
 import { envVars } from "./app/config/env";
-import sequelize from "./app/config/sequelize.config";
+let server : Server;
+dotenv.config()
 
-let server: Server;
 
 const startServer = async () => {
-  try {
-    await sequelize.authenticate(); 
-    await sequelize.sync(); 
+      try {
+            await mongoose.connect(envVars.DB_URL as string)
+            console.log("db is connected");
 
-    console.log("✅ Connected to the database!");
-
-    server = app.listen(envVars.PORT, () => {
-      console.log(`🚀 Server is running on port ${envVars.PORT}`);
-    });
-  } catch (error) {
-    console.error("❌ Error while starting the server:", error);
-    process.exit(1);
-  }
-};
-
-(async () => {
-  await startServer();
-})();
-
-// Graceful shutdown
-const gracefulShutdown = (signal: string) => {
-  console.log(`${signal} signal received. Shutting down gracefully...`);
-
-  if (server) {
-    server.close(() => {
-      console.log("🛑 Server closed.");
-      process.exit(1);
-    });
-  } else {
-    process.exit(1);
-  }
-};
-
-// Signal and error handlers
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
-process.on("unhandledRejection", (reason) => {
-  console.error("Unhandled Rejection:", reason);
-  gracefulShutdown("unhandledRejection");
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught Exception:", error);
-  gracefulShutdown("uncaughtException");
-});
+            server = app.listen(envVars.PORT, () => {
+                  console.log(`server is runnign on ${envVars.PORT}`);
+            })
+      }
+      catch (error) {
+            console.log(error);
+      }
+}
+startServer()

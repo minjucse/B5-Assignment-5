@@ -9,43 +9,28 @@ import AppError from "../../errorHelpers/AppError"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
 import { setAuthCookie } from "../../utils/setCookie"
-import { createUserTokens } from "../../utils/userTokens"
+import { CreateUserTokens } from "../../utils/userTokens"
 import { AuthServices } from "./auth.service"
 
-const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate("local", async (err: any, user: any, info: any) => {
-        if (err) {
-            return next(new AppError(401, err))
-        }
+const credentialsLogin = (async (req: Request, res: Response, next: NextFunction) => {
+    const loginfo = await AuthServices.creadentialLogin(req.body)
 
-        if (!user) {
-            return next(new AppError(401, info.message))
-        }
+    setAuthCookie(res, loginfo)
 
-        const userTokens = await createUserTokens(user)
-        const { password, ...rest } = user.get({ plain: true });
-
-        setAuthCookie(res, userTokens)
-        sendResponse(res, {
-            success: true,
-            statusCode: httpStatus.OK,
-            message: "User Logged In Successfully",
-            data: {
-                accessToken: userTokens.accessToken,
-                refreshToken: userTokens.refreshToken,
-                user: rest
-
-            },
-        })
-    })(req, res, next)
-
+    sendResponse(res, {
+        success: true,
+        statusCode: (httpStatus.OK),
+        message: `Login successfully`,
+        data: loginfo
+    })
 })
+
 const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         throw new AppError(httpStatus.BAD_REQUEST, "No refresh token recieved from cookies")
     }
-    const tokenInfo = await AuthServices.getNewAccessToken(refreshToken as string)
+    const tokenInfo = await AuthServices.getNewAccessToken(refreshToken)
     setAuthCookie(res, tokenInfo);
 
     sendResponse(res, {
@@ -57,15 +42,15 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: N
 })
 const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-   res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
     });
     res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
     });
 
     sendResponse(res, {
@@ -90,74 +75,12 @@ const changePassword = catchAsync(async (req: Request, res: Response, next: Next
         data: null,
     })
 })
-const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const decodedToken = req.user
-
-    await AuthServices.resetPassword(req.body, decodedToken as JwtPayload);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Password Changed Successfully",
-        data: null,
-    })
-})
-const setPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const decodedToken = req.user as JwtPayload
-    const { password } = req.body;
-
-    await AuthServices.setPassword(decodedToken.userId, password);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Password Changed Successfully",
-        data: null,
-    })
-})
-const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
 
-    const { email } = req.body;
-
-    await AuthServices.forgotPassword(email);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Email Sent Successfully",
-        data: null,
-    })
-})
-const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    let redirectTo = req.query.state ? req.query.state as string : ""
-
-    if (redirectTo.startsWith("/")) {
-        redirectTo = redirectTo.slice(1)
-    }
-
-    const user = req.user;
-
-    if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
-    }
-
-    const tokenInfo = createUserTokens(user)
-
-    setAuthCookie(res, tokenInfo)
-    res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
-})
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
-    resetPassword,
-    setPassword,
-    forgotPassword,
     changePassword,
-    googleCallbackController
 }
