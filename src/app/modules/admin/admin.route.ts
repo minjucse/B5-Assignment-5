@@ -5,11 +5,11 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import { updateUserStatusValidationSchema } from "./admin.validation";
 import { AdminController } from "./admin.controller";
 
-const AdminRouter = Router()
+const AdminRoutes = Router()
 
-AdminRouter.patch('/users/:id/status', checkAuth(Role.Admin), validateRequest(updateUserStatusValidationSchema), AdminController.updateUserStatus)
-AdminRouter.get('/driver-applications', checkAuth(Role.Admin), AdminController.getAllDriverApplications)
-AdminRouter.patch('/driver-applications/:id/approve', checkAuth(Role.Admin), AdminController.approvalDriver)
-AdminRouter.patch('/driver-applications/:id/reject', checkAuth(Role.Admin), AdminController.rejectDriverApproval)
+AdminRoutes.patch('/users/:id/status', checkAuth(Role.Admin), validateRequest(updateUserStatusValidationSchema), AdminController.updateUserStatus)
+AdminRoutes.get('/driver-applications', checkAuth(Role.Admin), AdminController.getAllDriverApplications)
+AdminRoutes.patch('/driver-applications/:id/approve', checkAuth(Role.Admin), AdminController.approvalDriver)
+AdminRoutes.patch('/driver-applications/:id/reject', checkAuth(Role.Admin), AdminController.rejectDriverApproval)
 
-export default AdminRouter;
+export default AdminRoutes;
