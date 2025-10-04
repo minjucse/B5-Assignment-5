@@ -94,8 +94,8 @@ npm run dev
 
 ## 🔑 Default Admin Credentials
 
-- **Email:** `rider@test.com`  
-- **Password:** `Rider123!`
+- **Email:** `rider@example.com`  
+- **Password:** `Pass@123`
 
 ## 📌 API Endpoints
 
