@@ -61,7 +61,8 @@ Built with **Node.js**, **Express.js**, **TypeScript**, and **Mongoose**. It sup
 ```bash
 npm install
 
-## 2️⃣ Environment Setup
+
+### 2️⃣ Environment Setup
 
 Create a **.env** file in the project root and configure the following variables:
 
@@ -110,55 +111,55 @@ You can import all endpoints directly into **Postman** from the GitHub repo.
 
 ---
 
-### 🔐 Authentication (`/auth`)
+## 🔐 Authentication (`/auth`)
 
-| Method | Endpoint           | Description                                        | Access       | Request Body                                    |
-|--------|------------------|----------------------------------------------------|-------------|-----------------------------------------------|
-| POST   | `/login`          | Logs in a user and returns tokens.                 | Public      | `{ "email", "password" }`                     |
-| POST   | `/refresh-token`  | Generates a new access token using refresh token. | Public      | Empty                                         |
-| POST   | `/logout`         | Clears the authentication cookies.                | Authenticated | Empty                                       |
-| POST   | `/reset-password` | Allows a logged-in user to change their password.| Authenticated | `{ "oldPassword", "newPassword" }`           |
-
----
-
-### 🧍 User (`/user`)
-
-| Method | Endpoint      | Description                              | Access       | Request Body                                      |
-|--------|--------------|------------------------------------------|-------------|-------------------------------------------------|
-| POST   | `/register`   | Registers a new user (defaults to Rider) | Public      | `{ "name", "email", "password", "phone" }`     |
-| PATCH  | `/:id`        | Updates a user's own profile             | Authenticated | `{ "name", "phone", "address" }`              |
-| GET    | `/all-users`  | Retrieves a list of all users             | Admin       | Empty                                           |
+| Method | Endpoint           | Description                                        | Access        | Request Body                    |
+|--------|------------------|----------------------------------------------------|---------------|--------------------------------|
+| POST   | `/login`          | Logs in a user and returns tokens.                 | Public        | `{ "email", "password" }`      |
+| POST   | `/refresh-token`  | Generates a new access token using refresh token. | Public        | Empty                          |
+| POST   | `/logout`         | Clears the authentication cookies.                | Authenticated | Empty                          |
+| POST   | `/reset-password` | Allows a logged-in user to change their password.| Authenticated | `{ "oldPassword", "newPassword" }` |
 
 ---
 
-### 🚕 Driver (`/drivers`)
+## 🧍 User (`/user`)
 
-| Method | Endpoint             | Description                              | Access  | Request Body                                        |
-|--------|--------------------|------------------------------------------|--------|---------------------------------------------------|
-| POST   | `/apply`            | A Rider applies to become a Driver       | Rider  | `{ "licenseNumber", "licenseImage", "vehicleDetails": {...} }` |
-| PATCH  | `/me/availability`  | A Driver sets availability Online/Offline | Driver | `{ "isAvailable": true/false }`                  |
-
----
-
-### ⚙️ Admin (`/admin`)
-
-| Method | Endpoint                               | Description                             | Access | Request Body                    |
-|--------|----------------------------------------|-----------------------------------------|-------|---------------------------------|
-| PATCH  | `/users/:id/status`                     | Blocks or activates a user account      | Admin | `{ "status": "BLOCK" or "ACTIVE" }` |
-| GET    | `/driver-applications`                  | Gets all pending driver applications    | Admin | Empty                           |
-| PATCH  | `/driver-applications/:id/approve`     | Approves a driver application           | Admin | Empty                           |
-| PATCH  | `/driver-applications/:id/reject`      | Rejects a driver application            | Admin | Empty                           |
+| Method | Endpoint      | Description                              | Access        | Request Body                              |
+|--------|--------------|------------------------------------------|---------------|------------------------------------------|
+| POST   | `/register`   | Registers a new user (defaults to Rider) | Public        | `{ "name", "email", "password", "phone" }` |
+| PATCH  | `/:id`        | Updates a user's own profile             | Authenticated | `{ "name", "phone", "address" }`          |
+| GET    | `/all-users`  | Retrieves a list of all users             | Admin         | Empty                                     |
 
 ---
 
-### 🚗 Ride (`/rides`)
+## 🚕 Driver (`/drivers`)
 
-| Method | Endpoint             | Description                                               | Access         | Request Body                                             |
-|--------|--------------------|-----------------------------------------------------------|----------------|--------------------------------------------------------|
-| POST   | `/request`          | A Rider requests a new ride                               | Rider          | `{ "pickupLocation": {...}, "destinationLocation": {...} }` |
-| PATCH  | `/:rideId/accept`   | A Driver accepts a ride request                            | Driver         | Empty                                                  |
-| PATCH  | `/:rideId/status`   | A Driver updates the status of an ongoing ride            | Driver         | `{ "status": "PICKED_UP" or "IN_TRANSIT" or "COMPLETED" }` |
-| PATCH  | `/:rideId/cancel`   | A Rider cancels their ride request                        | Rider          | Empty                                                  |
-| GET    | `/history`          | Gets the ride history for the logged-in user              | Rider/Driver   | Empty                                                  |
+| Method | Endpoint             | Description                              | Access  | Request Body                                                |
+|--------|--------------------|------------------------------------------|---------|------------------------------------------------------------|
+| POST   | `/apply`            | A Rider applies to become a Driver       | Rider   | `{ "licenseNumber", "licenseImage", "vehicleDetails": {...} }` |
+| PATCH  | `/me/availability`  | A Driver sets availability Online/Offline | Driver  | `{ "isAvailable": true/false }`                             |
+
+---
+
+## ⚙️ Admin (`/admin`)
+
+| Method | Endpoint                               | Description                             | Access | Request Body                            |
+|--------|----------------------------------------|-----------------------------------------|-------|----------------------------------------|
+| PATCH  | `/users/:id/status`                     | Blocks or activates a user account      | Admin | `{ "status": "BLOCK" or "ACTIVE" }`   |
+| GET    | `/driver-applications`                  | Gets all pending driver applications    | Admin | Empty                                  |
+| PATCH  | `/driver-applications/:id/approve`     | Approves a driver application           | Admin | Empty                                  |
+| PATCH  | `/driver-applications/:id/reject`      | Rejects a driver application            | Admin | Empty                                  |
+
+---
+
+## 🚗 Ride (`/rides`)
+
+| Method | Endpoint             | Description                                               | Access        | Request Body                                               |
+|--------|--------------------|-----------------------------------------------------------|---------------|-----------------------------------------------------------|
+| POST   | `/request`          | A Rider requests a new ride                               | Rider         | `{ "pickupLocation": {...}, "destinationLocation": {...} }` |
+| PATCH  | `/:rideId/accept`   | A Driver accepts a ride request                            | Driver        | Empty                                                     |
+| PATCH  | `/:rideId/status`   | A Driver updates the status of an ongoing ride            | Driver        | `{ "status": "PICKED_UP" or "IN_TRANSIT" or "COMPLETED" }` |
+| PATCH  | `/:rideId/cancel`   | A Rider cancels their ride request                        | Rider         | Empty                                                     |
+| GET    | `/history`          | Gets the ride history for the logged-in user              | Rider/Driver  | Empty                                                     |
 
 
